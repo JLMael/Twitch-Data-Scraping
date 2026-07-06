@@ -1,35 +1,45 @@
-Ce projet est un scrappeur conçu pour récolter des données depuis le site StreamerBans, les mettre en forme, et les sauvegarder dans un fichier JSON. Le scrappeur récupère les informations depuis une URL spécifique et traite les données pour une utilisation ultérieure.
+# Twitch Data Scraping
 
-Prérequis
-Avant de commencer, assurez-vous d'avoir les éléments suivants installés sur votre machine :
+Petit scraper Node.js qui récupère les données publiques de streamers Twitch
+depuis [StreamerBans](https://streamerbans.com), les agrège et les enregistre
+dans un fichier `allData.json`.
 
-Node.js (version 14 ou supérieure)
-NPM (généralement inclus avec Node.js)
-Installation
-Clonez le dépôt :
+## Prérequis
 
-bash
-Copier le code
-git clone https://votre-repository-url.git
-cd nom-du-dossier
-Installez les dépendances :
+- Node.js **18 ou supérieur** (le script utilise `fetch` natif, aucune
+  dépendance externe).
 
-Aucune dépendance supplémentaire n'est nécessaire pour ce projet si ce n'est Node.js et ses modules natifs.
+## Utilisation
 
-Utilisation
-Pour lancer le scrapping et obtenir les données formatées dans un fichier JSON, il suffit de lancer le fichier scrape.mjs. Les données seront automatiquement récupérées, traitées, et stockées dans un fichier JSON.
+```bash
+git clone https://github.com/JLMael/Twitch-Data-Scraping.git
+cd Twitch-Data-Scraping
+npm run scrape   # ou : node scrape.mjs
+```
 
-Commande pour lancer le scrappeur :
-bash
-Copier le code
-node scrape.mjs
-Output
-Le fichier JSON généré contiendra toutes les informations récoltées et sera sauvegardé dans le répertoire de travail courant. Le nom du fichier et son chemin exact peuvent être spécifiés dans le fichier scrape.mjs.
+Le script parcourt les ~1067 pages de l'API et écrit le résultat dans
+`allData.json` (fichier volumineux, non versionné).
 
-Structure du projet
-scrape.mjs: Le script principal qui effectue le scrapping et génère le fichier JSON.
-Contribuer
-Les contributions sont les bienvenues ! Si vous avez des idées pour améliorer ce scrappeur ou si vous trouvez des bugs, n'hésitez pas à ouvrir une issue ou à soumettre une pull request.
+## Structure des données
 
-Licence
-Ce projet est sous licence MIT. Consultez le fichier LICENSE pour plus de détails.
+Chaque page renvoie un objet Next.js contenant `pageProps.users`, une liste de
+streamers avec notamment :
+
+| Champ               | Description              |
+| ------------------- | ------------------------ |
+| `display_name`      | Nom affiché de la chaîne |
+| `login_name`        | Identifiant Twitch       |
+| `followers`         | Nombre de followers      |
+| `is_partner`        | Statut partenaire        |
+| `is_suspended`      | Chaîne suspendue ou non  |
+| `profile_image_url` | URL de l'avatar          |
+
+## Note
+
+L'API de StreamerBans repose sur un `BUILD_ID` Next.js qui change à chaque
+déploiement du site. Si le scraper renvoie des erreurs 404, mets à jour la
+constante `BUILD_ID` en tête de `scrape.mjs` (voir le commentaire du fichier).
+
+## Licence
+
+[MIT](LICENSE)

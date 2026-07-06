@@ -1,28 +1,33 @@
 import { writeFile } from "fs/promises";
 
-async function scrapeData() {
-  const baseURL =
-    "https://streamerbans.com/_next/data/1mnxel7WR27f6Xxs_7zrP/streamers.json?page=";
-  const totalPages = 1067;
-  let allData = [];
+// StreamerBans expose ses données via l'API interne de Next.js.
+// Le BUILD_ID change à chaque déploiement du site : si le scraper renvoie
+// des 404, récupère le nouveau hash dans le HTML de https://streamerbans.com
+// (balise <script src="/_next/static/<BUILD_ID>/_buildManifest.js">).
+const BUILD_ID = "1mnxel7WR27f6Xxs_7zrP";
+const BASE_URL = `https://streamerbans.com/_next/data/${BUILD_ID}/streamers.json?page=`;
+const TOTAL_PAGES = 1067;
+const OUTPUT_FILE = "allData.json";
 
-  for (let page = 1; page <= totalPages; page++) {
+async function scrapeData() {
+  const allData = [];
+
+  for (let page = 1; page <= TOTAL_PAGES; page++) {
     try {
-      const response = await fetch(`${baseURL}${page}`);
-      const data = await response.json();
-      allData.push(data);
-      console.log(`Fetched page ${page}`);
+      const response = await fetch(`${BASE_URL}${page}`);
+      if (!response.ok) {
+        console.error(`Page ${page} : HTTP ${response.status}`);
+        continue;
+      }
+      allData.push(await response.json());
+      console.log(`Page ${page}/${TOTAL_PAGES} récupérée`);
     } catch (error) {
-      console.error(`Error fetching page ${page}:`, error);
+      console.error(`Erreur sur la page ${page} :`, error.message);
     }
   }
 
-  try {
-    await writeFile("allData.json", JSON.stringify(allData, null, 2));
-    console.log("Data saved to allData.json");
-  } catch (err) {
-    console.error("Error writing file:", err);
-  }
+  await writeFile(OUTPUT_FILE, JSON.stringify(allData, null, 2));
+  console.log(`Données enregistrées dans ${OUTPUT_FILE} (${allData.length} pages)`);
 }
 
 scrapeData();

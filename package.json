@@ -1,5 +1,21 @@
 {
-  "dependencies": {
-    "node-fetch": "^3.3.2"
-  }
+  "name": "twitch-data-scraping",
+  "version": "1.0.0",
+  "description": "Scraper des données publiques de streamers Twitch depuis StreamerBans vers un fichier JSON.",
+  "type": "module",
+  "main": "scrape.mjs",
+  "scripts": {
+    "scrape": "node scrape.mjs"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "keywords": [
+    "twitch",
+    "scraper",
+    "streamerbans",
+    "data"
+  ],
+  "author": "JLMael",
+  "license": "MIT"
 }

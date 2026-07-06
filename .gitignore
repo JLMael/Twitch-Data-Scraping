@@ -1,0 +1,9 @@
+# Dépendances
+node_modules/
+
+# Données générées par le scraper (volumineux)
+allData.json
+
+# Divers
+.DS_Store
+*.log
